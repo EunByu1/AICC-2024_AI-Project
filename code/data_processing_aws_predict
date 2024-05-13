@@ -1,0 +1,39 @@
+import os
+import glob
+
+# Define the directory containing the files and the output directory
+input_directory = '2024_aws_stt_txt_files'
+output_directory = '2024_stt_predict_result'
+
+# Ensure the output directory exists
+os.makedirs(output_directory, exist_ok=True)
+
+# Get a list of all text files in the input directory
+files = glob.glob(os.path.join(input_directory, '*.txt'))
+
+# Initialize a dictionary to store parts of each file
+file_contents = {}
+
+# Process each file
+for file in files:
+    # Extract the base name without 'partX'
+    base_name = '_'.join(os.path.basename(file).split('_')[:-1])
+    
+    # Read the content of the file
+    with open(file, 'r') as f:
+        content = f.read()
+    
+    # Append content to the respective key in dictionary
+    if base_name in file_contents:
+        file_contents[base_name] += content
+    else:
+        file_contents[base_name] = content
+
+# Write the combined contents to new files in the output directory, in lowercase
+for base_name, content in file_contents.items():
+    # Define the new filename
+    new_filename = os.path.join(output_directory, base_name + '.txt')
+    
+    # Write the combined content to a new file, converted to lowercase
+    with open(new_filename, 'w') as f:
+        f.write(content.lower())
